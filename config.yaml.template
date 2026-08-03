@@ -1,0 +1,160 @@
+providers:
+  zhipuai:
+    base_url: "https://api.z.ai/api/coding/paas/v4"
+    keys:
+      - "YOUR_ZHIPUAI_KEY_1"
+      - "YOUR_ZHIPUAI_KEY_2"
+      - "YOUR_ZHIPUAI_KEY_3"
+  minimax:
+    base_url: "https://api.minimax.io/v1"
+    keys:
+      - "YOUR_MINIMAX_KEY_1"
+      - "YOUR_MINIMAX_KEY_2"
+      - "YOUR_MINIMAX_KEY_3"
+
+models:
+  glm-5:
+    provider: zhipuai
+    remote_name: glm-5
+    max_input_tokens: 200000
+    max_output_tokens: 200000
+    supports_vision: true
+    timeout: 180
+    stream_timeout: 120
+
+  glm-5.1:
+    provider: zhipuai
+    remote_name: glm-5.1
+    max_input_tokens: 200000
+    max_output_tokens: 200000
+    supports_vision: true
+    timeout: 180
+    stream_timeout: 120
+
+  glm-5-turbo:
+    provider: zhipuai
+    remote_name: glm-5-turbo
+    max_input_tokens: 200000
+    max_output_tokens: 128000
+    supports_vision: true
+    timeout: 180
+    stream_timeout: 120
+
+  glm-4.6v:
+    provider: zhipuai
+    remote_name: glm-4.6v
+    max_input_tokens: 200000
+    max_output_tokens: 16000
+    supports_vision: true
+    timeout: 180
+    stream_timeout: 120
+
+  glm-4.7:
+    provider: zhipuai
+    remote_name: glm-4.7
+    max_input_tokens: 128000
+    max_output_tokens: 128000
+    supports_vision: false
+    timeout: 180
+    stream_timeout: 120
+
+  glm-4.5-air:
+    provider: zhipuai
+    remote_name: glm-4.5-air
+    max_input_tokens: 128000
+    max_output_tokens: 32000
+    supports_vision: false
+    timeout: 60
+    stream_timeout: 120
+
+  minimax-m2.5:
+    provider: minimax
+    remote_name: MiniMax-M2.5
+    max_input_tokens: 200000
+    max_output_tokens: 65536
+    supports_vision: false
+    timeout: 180
+    stream_timeout: 120
+
+  minimax-m2.7:
+    provider: minimax
+    remote_name: MiniMax-M2.7
+    max_input_tokens: 200000
+    max_output_tokens: 65536
+    supports_vision: false
+    timeout: 180
+    stream_timeout: 120
+
+  minimax-m2.1:
+    provider: minimax
+    remote_name: MiniMax-M2.1
+    max_input_tokens: 200000
+    max_output_tokens: 65536
+    supports_vision: false
+    timeout: 180
+    stream_timeout: 120
+
+  minimax-m2:
+    provider: minimax
+    remote_name: MiniMax-M2
+    max_input_tokens: 200000
+    max_output_tokens: 65536
+    supports_vision: false
+    timeout: 180
+    stream_timeout: 120
+
+routing:
+  strategy: latency-based
+  allowed_fails: 3
+  cooldown_seconds: 120
+
+retry:
+  max_retries: 3
+  base_wait_seconds: 5
+  rate_limit_retries: 3
+  timeout_retries: 5
+  server_error_retries: 3
+  auth_error_retries: 0
+  content_policy_retries: 0
+
+fallbacks:
+  glm-5-turbo:
+    - glm-5
+    - minimax-m2.7
+  glm-5:
+    - glm-5-turbo
+    - minimax-m2.7
+  glm-4.7:
+    - glm-5-turbo
+    - minimax-m2.7
+  glm-4.5-air:
+    - glm-4.7
+    - glm-5-turbo
+  minimax-m2.7:
+    - minimax-m2.5
+    - glm-5-turbo
+  minimax-m2.5:
+    - minimax-m2.7
+    - glm-5-turbo
+  minimax-m2.1:
+    - minimax-m2.7
+    - glm-5-turbo
+  minimax-m2:
+    - minimax-m2.7
+    - glm-5-turbo
+
+context_window_fallbacks:
+  glm-4.5-air:
+    - glm-4.7
+    - glm-5-turbo
+  glm-4.7:
+    - glm-5-turbo
+  minimax-m2.5:
+    - minimax-m2.1
+    - minimax-m2
+  minimax-m2.1:
+    - minimax-m2.5
+    - minimax-m2
+  minimax-m2:
+    - minimax-m2.5
+    - minimax-m2.1

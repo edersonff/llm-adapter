@@ -1,0 +1,13 @@
+{
+  "schema": 1,
+  "name": "llm",
+  "description": "One binary for every LLM provider: routes, rotates keys, falls back, streams",
+  "input": "json on stdin, an openai-style messages array, plus flags for config, model and streaming",
+  "output": "an openai-style completion on stdout, or sse lines with --stream, logs kept on stderr",
+  "kind": "module",
+  "tags": ["llm", "provider", "routing", "streaming", "rust"],
+  "license": "MIT",
+  "requires": ["rust", "network access to the configured provider apis"],
+  "entry": { "cli": "target/release/llm-adapter --config config.yaml" },
+  "cost": { "model": "paid", "detail": "cost is whatever the configured provider charges, this module adds nothing" }
+}
