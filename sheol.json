@@ -7,7 +7,7 @@
   "kind": "module",
   "tags": ["llm", "provider", "routing", "streaming", "rust"],
   "license": "MIT",
-  "requires": ["rust", "network access to the configured provider apis"],
-  "entry": { "cli": "target/release/llm-adapter --config config.yaml" },
+  "requires": ["rust>=1.74"],
+  "entry": { "cli": "run.sh --config config.yaml" },
   "cost": { "model": "paid", "detail": "cost is whatever the configured provider charges, this module adds nothing" }
 }
