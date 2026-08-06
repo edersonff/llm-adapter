@@ -17,7 +17,7 @@
     "rust>=1.74"
   ],
   "entry": {
-    "cli": "run.sh --config config.yaml"
+    "cli": "bash run.sh --config config.yaml"
   },
   "cost": {
     "model": "paid",
