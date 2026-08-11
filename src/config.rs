@@ -15,7 +15,9 @@ pub enum ConfigError {
 pub struct AppConfig {
     pub providers: HashMap<String, ProviderConfig>,
     pub models: HashMap<String, ModelConfig>,
+    #[serde(default)]
     pub routing: RoutingConfig,
+    #[serde(default)]
     pub retry: RetryConfig,
     #[serde(default)]
     pub fallbacks: HashMap<String, Vec<String>>,
@@ -40,23 +42,41 @@ pub struct ModelConfig {
     pub stream_timeout: u64,
 }
 
-#[derive(Debug, Clone, serde::Deserialize)]
+#[derive(Debug, Clone, serde::Deserialize, Default)]
 pub struct RoutingConfig {
+    #[serde(default = "default_strategy")]
     pub strategy: String,
+    #[serde(default = "default_allowed_fails")]
     pub allowed_fails: u32,
+    #[serde(default = "default_cooldown")]
     pub cooldown_seconds: u64,
 }
 
-#[derive(Debug, Clone, serde::Deserialize)]
+fn default_strategy() -> String { "latency-based".into() }
+fn default_allowed_fails() -> u32 { 3 }
+fn default_cooldown() -> u64 { 120 }
+
+#[derive(Debug, Clone, serde::Deserialize, Default)]
 pub struct RetryConfig {
+    #[serde(default = "default_max_retries")]
     pub max_retries: u32,
+    #[serde(default = "default_base_wait")]
     pub base_wait_seconds: u64,
+    #[serde(default = "default_max_retries")]
     pub rate_limit_retries: u32,
+    #[serde(default = "default_timeout_retries")]
     pub timeout_retries: u32,
+    #[serde(default = "default_max_retries")]
     pub server_error_retries: u32,
+    #[serde(default)]
     pub auth_error_retries: u32,
+    #[serde(default)]
     pub content_policy_retries: u32,
 }
+
+fn default_max_retries() -> u32 { 3 }
+fn default_base_wait() -> u64 { 5 }
+fn default_timeout_retries() -> u32 { 5 }
 
 #[derive(Debug, Clone)]
 pub struct ResolvedModelEntry {
