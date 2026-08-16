@@ -2,7 +2,7 @@
   "schema": 1,
   "name": "llm-adapter",
   "description": "One binary for every LLM provider: routes, rotates keys, falls back, streams",
-  "input": "json on stdin, an openai-style messages array, plus flags for config, model and streaming",
+  "input": "an openai-style request body on stdin: {\"messages\": [...], \"model\": ...}",
   "output": "an openai-style completion on stdout, or sse lines with --stream, logs kept on stderr",
   "kind": "module",
   "tags": [
@@ -17,12 +17,16 @@
     "rust>=1.74"
   ],
   "entry": {
-    "cli": "bash run.sh --config config.yaml"
+    "cli": "bash run.sh"
   },
   "cost": {
     "model": "paid",
     "detail": "cost is whatever the configured provider charges, this module adds nothing"
   },
   "example": "test-messages.json",
-  "needs": "provider api keys in config.yaml (copy config.yaml.template)"
+  "needs": "provider api keys in config.yaml (copy config.yaml.template)",
+  "io": {
+    "input": "stdin",
+    "output": "stdout"
+  }
 }
