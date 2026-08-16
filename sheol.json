@@ -23,5 +23,6 @@
     "model": "paid",
     "detail": "cost is whatever the configured provider charges, this module adds nothing"
   },
-  "example": "test-messages.json"
+  "example": "test-messages.json",
+  "needs": "provider api keys in config.yaml (copy config.yaml.template)"
 }
