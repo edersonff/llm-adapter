@@ -3,7 +3,9 @@ set -euo pipefail
 dir="$(cd "$(dirname "$0")" && pwd)"
 cd "$dir"
 
-CONFIG="${LLM_CONFIG:-config.yaml}"
+CONFIG="${LLM_CONFIG:-}"
+[ -z "$CONFIG" ] && [ -f "$HOME/.config/llm-adapter/config.yaml" ] && CONFIG="$HOME/.config/llm-adapter/config.yaml"
+CONFIG="${CONFIG:-config.yaml}"
 if [ ! -f "$CONFIG" ] && [ -f config.yaml.template ]; then
   cp config.yaml.template "$CONFIG"
   echo "created $CONFIG from the template — fill in one provider key, or export LLM_CONFIG=/path/to/your/config.yaml" >&2
