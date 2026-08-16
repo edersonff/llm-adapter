@@ -120,6 +120,7 @@ impl<'a> ChatBuilder<'a> {
 
             async move {
                 let decision = router.resolve(&model).await?;
+                let max_tokens = effective_max_tokens(max_tokens, decision.max_output_tokens);
 
                 let chat_request = ChatRequest {
                     model,
@@ -247,5 +248,24 @@ impl<'a> ChatBuilder<'a> {
             .backend
             .chat_stream(normalized, &decision.key)
             .await
+    }
+}
+
+fn effective_max_tokens(requested: Option<u32>, model_limit: u32) -> Option<u32> {
+    requested.or(Some(model_limit))
+}
+
+#[cfg(test)]
+mod tests {
+    use super::effective_max_tokens;
+
+    #[test]
+    fn omitted_max_tokens_falls_back_to_the_model_limit() {
+        assert_eq!(effective_max_tokens(None, 8000), Some(8000));
+    }
+
+    #[test]
+    fn explicit_max_tokens_wins_over_the_limit() {
+        assert_eq!(effective_max_tokens(Some(50), 8000), Some(50));
     }
 }
