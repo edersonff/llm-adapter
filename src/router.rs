@@ -592,12 +592,18 @@ mod tests {
 
     #[test]
     fn key_pool_round_robin() {
-        let pool = KeyPool::new(vec!["a".to_string(), "b".to_string(), "c".to_string()]);
-        assert_eq!(pool.next_key(), (0, "a"));
-        assert_eq!(pool.next_key(), (1, "b"));
-        assert_eq!(pool.next_key(), (2, "c"));
-        assert_eq!(pool.next_key(), (0, "a"));
-        assert_eq!(pool.next_key(), (1, "b"));
+        // KeyPool starts at a random index (anti-thundering-herd) — assert the
+        // sequence cycles in order from wherever it starts, not from zero.
+        let keys = vec!["a".to_string(), "b".to_string(), "c".to_string()];
+        let pool = KeyPool::new(keys.clone());
+        let (first_idx, first_key) = pool.next_key();
+        assert_eq!(keys[first_idx], first_key, "index and key agree at the start");
+        for step in 1..keys.len() * 2 {
+            let (idx, key) = pool.next_key();
+            let want = (first_idx + step) % keys.len();
+            assert_eq!(idx, want, "rotation advances and wraps");
+            assert_eq!(keys[want], key, "key follows rotation");
+        }
     }
 
     #[test]
